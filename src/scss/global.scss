@@ -1,7 +1,9 @@
-@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
-
 button {
   @extend .button, .is-primary;
+}
+
+body {
+  padding: 1.5em !important;
 }
 
 input {
@@ -15,6 +17,7 @@ input {
 @import "~bulma/sass/elements/content.sass";
 @import "~bulma/sass/elements/container.sass";
 @import "~bulma/sass/elements/icon.sass";
+@import "~bulma/sass/components/modal.sass";
 @import "~bulma/sass/form/shared.sass";
 @import "~bulma/sass/form/input-textarea.sass";
 @import "~bulma/sass/form/tools.sass";

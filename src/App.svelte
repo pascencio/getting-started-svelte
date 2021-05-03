@@ -3,17 +3,34 @@
   import GreetingList from "./GreetingList.svelte";
   let greeting = {};
   let greetings = [];
+  let modal = {
+    isActive: false,
+    message: undefined,
+    title: undefined,
+  };
   function add() {
     greeting.id = Date.now().valueOf();
     greetings = [...greetings, greeting];
     greeting = {};
   }
-  function remove(data) {
+  function remove(event) {
+    const data = event.detail;
+    console.info("Remove greeting event:", data);
+    const item = greetings[data.index];
     greetings.splice(data.index, 1);
     greetings = [...greetings];
+    modal.title = "Greeting removed";
+    modal.message = `Greeting N° ${data.index + 1} removed: ${item.firstName} ${
+      item.lastName
+    }`;
+    modal.isActive = true;
   }
-  $: show_button =
+  function hideModal() {
+    modal.isActive = false;
+  }
+  $: showButton =
     greeting.firstName !== undefined && greeting.lastName !== undefined;
+  $: showModal = "modal" + (modal.isActive ? " is-active" : " ");
 </script>
 
 <main class="container content">
@@ -38,7 +55,7 @@
           />
         </div>
       </div>
-      {#if show_button}
+      {#if showButton}
         <button on:click={add}>Add</button>
       {/if}
     </div>
@@ -51,6 +68,20 @@
   <div class="columns">
     <div class="column">
       <GreetingList on:remove={remove} {greetings} />
+    </div>
+  </div>
+  <div class={showModal}>
+    <div class="modal-background" />
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">{modal.title}</p>
+      </header>
+      <section class="modal-card-body">
+        {modal.message}
+      </section>
+      <footer class="modal-card-foot">
+        <button on:click={hideModal}>Ok</button>
+      </footer>
     </div>
   </div>
 </main>
