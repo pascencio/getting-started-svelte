@@ -1,33 +1,41 @@
 <script>
   import Greeting from "./Greeting.svelte";
   import GreetingList from "./GreetingList.svelte";
+  import GreetingsStore from "./stores/greeting.store";
   let greeting = {};
-  let greetings = [];
+
   let modal = {
     isActive: false,
     message: undefined,
     title: undefined,
   };
-  function add() {
-    greeting.id = Date.now().valueOf();
-    greetings = [...greetings, greeting];
-    greeting = {};
-  }
-  function remove(event) {
-    const data = event.detail;
-    console.info("Remove greeting event:", data);
-    const item = greetings[data.index];
-    greetings.splice(data.index, 1);
-    greetings = [...greetings];
-    modal.title = "Greeting removed";
-    modal.message = `Greeting N° ${data.index + 1} removed: ${item.firstName} ${
-      item.lastName
-    }`;
-    modal.isActive = true;
-  }
+  const add = () => {
+    GreetingsStore.update((greetings) => {
+      greeting.id = Date.now().valueOf();
+      greetings = [...greetings, greeting];
+      greeting = {};
+      return greetings;
+    });
+  };
+  const remove = (event) => {
+    GreetingsStore.update((greetings) => {
+      const data = event.detail;
+      console.info("Remove greeting event:", data);
+      const item = greetings[data.index];
+      greetings.splice(data.index, 1);
+      greetings = [...greetings];
+      modal.title = "Greeting removed";
+      modal.message = `Greeting N° ${data.index + 1} removed: ${
+        item.firstName
+      } ${item.lastName}`;
+      modal.isActive = true;
+      return greetings;
+    });
+  };
   function hideModal() {
     modal.isActive = false;
   }
+
   $: showButton =
     greeting.firstName !== undefined && greeting.lastName !== undefined;
   $: showModal = "modal" + (modal.isActive ? " is-active" : " ");
@@ -67,7 +75,7 @@
   </div>
   <div class="columns">
     <div class="column">
-      <GreetingList on:remove={remove} {greetings} />
+      <GreetingList on:remove={remove} greetings={$GreetingsStore} />
     </div>
   </div>
   <div class={showModal}>
