@@ -1,16 +1,15 @@
 <script>
-  import Greeting from "./Greeting.svelte";
-  import GreetingList from "./GreetingList.svelte";
+  import GreetingList from "./components/GreetingList.svelte";
   import GreetingsStore from "./stores/greeting.store";
-  let greeting = {};
-
+  import GreetingInput from "./components/GreetingInput.svelte";
   let modal = {
     isActive: false,
     message: undefined,
     title: undefined,
   };
-  const add = () => {
+  const add = (event) => {
     GreetingsStore.update((greetings) => {
+      greeting = event.detail;
       greeting.id = Date.now().valueOf();
       greetings = [...greetings, greeting];
       greeting = {};
@@ -36,8 +35,6 @@
     modal.isActive = false;
   }
 
-  $: showButton =
-    greeting.firstName !== undefined && greeting.lastName !== undefined;
   $: showModal = "modal" + (modal.isActive ? " is-active" : " ");
 </script>
 
@@ -45,32 +42,7 @@
   <h1>Greeting Application</h1>
   <div class="columns">
     <div class="column">
-      <div class="field">
-        <div class="control">
-          <input
-            bind:value={greeting.lastName}
-            placeholder="Lastname"
-            type="text"
-          />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <input
-            bind:value={greeting.firstName}
-            placeholder="Name"
-            type="text"
-          />
-        </div>
-      </div>
-      {#if showButton}
-        <button on:click={add}>Add</button>
-      {/if}
-    </div>
-  </div>
-  <div class="columns">
-    <div class="column">
-      <Greeting {greeting} />
+      <GreetingInput on:add={add} />
     </div>
   </div>
   <div class="columns">
